@@ -1,0 +1,114 @@
+# Docker Compose for Orbit Hub
+
+services:
+  # PostgreSQL for production (SQLite for dev)
+  postgres:
+    image: postgres:16-alpine
+    container_name: orbit-hub-postgres
+    environment:
+      POSTGRES_DB: orbithub
+      POSTGRES_USER: orbithub
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orbithub -d orbithub"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - orbit-hub-network
+
+  # Keycloak for OIDC authentication
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: orbit-hub-keycloak
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: orbithub
+      KC_DB_USERNAME: orbithub
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-changeme}
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - orbit-hub-network
+
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: orbit-hub-backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://orbithub:${POSTGRES_PASSWORD:-changeme}@postgres:5432/orbithub
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: orbithub
+      KEYCLOAK_CLIENT_ID: orbithub-frontend
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET:-}
+      OIDC_ISSUER_URL: http://keycloak:8080/realms/orbithub
+      OIDC_AUDIENCE: orbithub-frontend
+      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+      SECRET_KEY: ${SECRET_KEY:-changemeinproduction}
+      DEBUG: "false"
+      DEMO_MODE: "false"
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_PROVIDER: ${LLM_PROVIDER:-openai-compatible}
+      LLM_MODEL: ${LLM_MODEL:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+    volumes:
+      - backend_data:/app/data
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - orbit-hub-network
+
+  # Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: orbit-hub-frontend
+    ports:
+      - "127.0.0.1:5173:5173"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - orbit-hub-network
+
+volumes:
+  postgres_data:
+  keycloak_data:
+  backend_data:
+
+networks:
+  orbit-hub-network:
+    driver: bridge
