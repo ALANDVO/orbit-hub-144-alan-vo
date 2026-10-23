@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "name": "orbit-hub-144-alan-vo",
+  "owner": "ALANDVO",
+  "email": "alanvo@gmail.com",
+  "domain": "AI/ML developer tools",
+  "summary": "Work in progress: orbit-hub-144-alan-vo",
+  "workflows": [
+    "Extract type scale, color palette, spacing, and component patterns from React/TypeScript codebases into DESIGN.md",
+    "Audit pages for physical CSS properties on RTL layouts with actionable logical property replacements",
+    "Enforce craft-floor quality rules before UI edits to prevent layout thrash and CSS injection bugs"
+  ],
+  "auth": "oidc-keycloak-saml-broker",
+  "llm_providers": [
+    "openai-compatible",
+    "anthropic",
+    "gemini",
+    "ollama"
+  ],
+  "status": "work-in-progress"
+}

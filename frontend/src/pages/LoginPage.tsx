@@ -1,0 +1,104 @@
+/** Login Page */
+
+import { MainLayout } from '@/components/layout';
+import { Card, CardHeader, CardContent, Input, Button, Alert } from '@/components/ui';
+import { Loader2, LogIn } from 'lucide-react';
+import { useState } from 'react';
+
+export function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      if (import.meta.env.VITE_DEMO_MODE === 'true') {
+        await new Promise(r => setTimeout(r, 500));
+        sessionStorage.setItem('demo_user', JSON.stringify({
+          name: 'Demo User',
+          email,
+          role: 'operator',
+        }));
+        window.location.href = '/';
+        return;
+      }
+
+      const response = await fetch('/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.detail || 'Login failed');
+      }
+
+      window.location.href = '/';
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <MainLayout className="flex items-center justify-center min-h-[calc(100vh-4rem)] px-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <h2 className="text-2xl font-bold">Sign in to Orbit Hub</h2>
+          <p className="mt-2 text-slate-500 dark:text-slate-400">Enter your credentials to continue</p>
+        </CardHeader>
+        <CardContent>
+          {import.meta.env.VITE_DEMO_MODE === 'true' && (
+            <Alert variant="info" className="mb-4">
+              Demo mode: any credentials will work. No real authentication.
+            </Alert>
+          )}
+
+          {error && <Alert variant="error" className="mb-4">{error}</Alert>}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+              autoComplete="email"
+            />
+            <Input
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              autoComplete="current-password"
+            />
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Sign in
+                </>
+              )}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </MainLayout>
+  );
+}
