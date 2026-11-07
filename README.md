@@ -353,4 +353,4 @@ Copyright © 2024 Alan Vo <alanvo@gmail.com>
 
 ---
 
-Alan Vo · [alanvo.net](https://alanvo.net)
+Alan Vo · [alanvo.net](https://alanvo.net) · [X: @alanvoasi](https://x.com/alanvoasi)
