@@ -59,3 +59,6 @@ Acceptance:
 - Viewer/Operator/Admin roles
 - Demo mode explicitly labeled and localhost-bound
 
+---
+
+Alan Vo · [alanvo.net](https://alanvo.net)

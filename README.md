@@ -350,3 +350,7 @@ asyncio.run(test())
 MIT License — see [LICENSE](LICENSE)
 
 Copyright © 2024 Alan Vo <alanvo@gmail.com>
+
+---
+
+Alan Vo · [alanvo.net](https://alanvo.net)

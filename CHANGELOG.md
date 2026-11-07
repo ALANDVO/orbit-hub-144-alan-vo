@@ -47,3 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Custom craft floor rules via UI
 - SAML IdP broker documentation
 - Performance benchmarking suite
+
+---
+
+Alan Vo · [alanvo.net](https://alanvo.net)
