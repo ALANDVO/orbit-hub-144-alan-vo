@@ -187,16 +187,17 @@ describe('DesignSystemCard Component', () => {
     expect(counts.length).toBeGreaterThanOrEqual(4); // 4 token categories each showing 1
   });
 
-  it('shows DESIGN.md badge when present', () => {
-    renderWithProviders(<DesignSystemCard designSystem={mockDesignSystem} />);
-    expect(screen.getByText('DESIGN.md generated')).toBeInTheDocument();
+  it('shows delete button when onDelete provided', () => {
+    const onDelete = vi.fn();
+    renderWithProviders(<DesignSystemCard designSystem={mockDesignSystem} onDelete={onDelete} />);
+    expect(screen.getByRole('button', { name: 'Delete' })).toBeInTheDocument();
   });
 
   it('calls onDelete when delete clicked', () => {
     const onDelete = vi.fn();
     renderWithProviders(<DesignSystemCard designSystem={mockDesignSystem} onDelete={onDelete} />);
-    // Click dropdown then delete - simplified test
-    expect(onDelete).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
+    expect(onDelete).toHaveBeenCalledWith(1);
   });
 });
 
