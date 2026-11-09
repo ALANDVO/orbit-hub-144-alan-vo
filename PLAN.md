@@ -10,7 +10,7 @@ project-skeleton
 
 ### project-skeleton — Project skeleton with FastAPI backend and React frontend
 
-Status: in_progress
+Status: done
 
 Acceptance:
 - backend/app/main.py exports FastAPI app
@@ -20,6 +20,10 @@ Acceptance:
 - CI workflow running pytest and npm build/test
 - README with install/run/test steps
 - portfolio.json with schema_version 1
+
+Implementation: `backend/app/main.py`, `backend/app/api/design_system.py`, `backend/app/services/design_extractor.py`, `backend/app/services/design_auditor.py`, `backend/app/services/craft_floor.py`, `backend/app/models/design_system.py`, `backend/app/core/config.py`, `backend/app/core/database.py`, `backend/app/core/security.py`, `frontend/src/main.tsx`, `frontend/src/App.tsx`, `frontend/src/pages/Dashboard.tsx`, `frontend/src/pages/DesignSystemPage.tsx`, `frontend/src/pages/AuditPage.tsx`, `frontend/src/pages/CraftFloorPage.tsx`, `frontend/src/pages/LoginPage.tsx`, `frontend/src/components/design-system/DesignSystemCard.tsx`, `frontend/src/components/audit/AuditCard.tsx`, `frontend/src/components/craft-floor/CraftFloorCheck.tsx`, `frontend/src/components/layout/MainLayout.tsx`, `frontend/src/components/ui/components.tsx`, `frontend/src/api/client.ts`, `frontend/src/hooks/useDesignSystems.ts`, `frontend/src/hooks/useAudits.ts`, `frontend/src/hooks/useCraftFloor.ts`, `frontend/src/types/api.ts`
+
+Tests: `backend/tests/test_api.py`, `frontend/src/test/components.test.tsx`
 
 ### design-system-engine — Design system extraction engine (core AI/ML feature)
 
