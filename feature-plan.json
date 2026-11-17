@@ -51,7 +51,7 @@
     {
       "id": "design-system-engine",
       "title": "Design system extraction engine (core AI/ML feature)",
-      "status": "planned",
+      "status": "in_progress",
       "acceptance": [
         "Analyzes React/TypeScript codebase for design tokens",
         "Extracts type scale, color palette, spacing, component patterns",

@@ -67,6 +67,11 @@ def extract_type_scale(content: str, file_path: Path) -> Dict[str, int]:
         matches = re.findall(pattern, content, re.IGNORECASE)
         for m in matches:
             scales[f"{source}:{m}"] += 1
+    # Extract line-height (critical typography metric)
+    line_height_matches = re.findall(r'line-height\s*:\s*([\d.]+(?:rem|em|percent))', content, re.IGNORECASE)
+    for m in line_height_matches:
+        scales[f'css:line-height:{m}'] += 1
+
     return dict(scales)
 
 
