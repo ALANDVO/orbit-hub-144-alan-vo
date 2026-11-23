@@ -27,7 +27,7 @@ Tests: `backend/tests/test_api.py`, `frontend/src/test/components.test.tsx`
 
 ### design-system-engine — Design system extraction engine (core AI/ML feature)
 
-Status: in_progress
+Status: done
 
 Acceptance:
 - Analyzes React/TypeScript codebase for design tokens

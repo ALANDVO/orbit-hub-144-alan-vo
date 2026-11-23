@@ -1,8 +1,17 @@
 # Changelog
 
+## 1.5.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.4.0 — work-in-progress checkpoint
 
 Partial code published for continued development. Known issues: STATUS.md.
+
+### Fixed
+- Design system extraction: Fixed line-height regex to support \`%\` units and trailing semicolons
+
+
 
 ## 1.3.0 — work-in-progress checkpoint
 
