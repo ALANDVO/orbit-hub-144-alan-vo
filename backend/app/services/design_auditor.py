@@ -86,21 +86,38 @@ class AuditScores:
         }
 
 
+RTL_SCRIPTS = ["ar", "he", "fa", "ur", "ps", "sd", "ug", "yi"]
+
+# Matches `direction: rtl` / `direction:rtl` in inline styles or <style> blocks.
+DIRECTION_RTL_PATTERN = re.compile(r'direction\s*:\s*rtl\b', re.IGNORECASE)
+
+
 def detect_rtl(html: str) -> bool:
-    """Detect if page declares RTL direction."""
+    """Detect if page declares RTL direction.
+
+    Covers: dir="rtl" on <html>/<body> or any nested element, an RTL script
+    ``lang`` on <html>, and ``direction: rtl`` declared in CSS (style tags or
+    inline style attributes).
+    """
     soup = BeautifulSoup(html, "html.parser")
     html_tag = soup.find("html")
-    body_tag = soup.find("body")
 
-    for tag in [html_tag, body_tag]:
-        if tag and tag.get("dir", "").lower() == "rtl":
-            return True
+    # dir="rtl" on any element (html, body, or a nested container).
+    if soup.find(attrs={"dir": re.compile(r"^rtl$", re.IGNORECASE)}):
+        return True
 
     # Check for RTL script lang without dir
     if html_tag and html_tag.get("lang"):
         lang = html_tag.get("lang", "").lower()
-        rtl_scripts = ["ar", "he", "fa", "ur", "ps", "sd", "ug", "yi"]
-        if any(lang.startswith(s) for s in rtl_scripts):
+        if any(lang.startswith(s) for s in RTL_SCRIPTS):
+            return True
+
+    # direction: rtl declared in any <style> block or inline style attribute.
+    for style_tag in soup.find_all("style"):
+        if style_tag.string and DIRECTION_RTL_PATTERN.search(style_tag.string):
+            return True
+    for tag in soup.find_all(style=True):
+        if DIRECTION_RTL_PATTERN.search(tag.get("style", "")):
             return True
 
     return False
